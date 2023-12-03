@@ -25,8 +25,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
+import androidx.core.net.toFile
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.permissions.*
 import com.shahrukh.jetpackcomposecameraapp.ui.theme.JetpackComposeCameraAppTheme
+import com.shahrukh.jetpackcomposecameraapp.util.Constants.testToken
+import dagger.hilt.android.AndroidEntryPoint
 
 import java.io.File
 import java.text.SimpleDateFormat
@@ -35,6 +39,7 @@ import kotlin.coroutines.coroutineContext
 
 
 @OptIn(ExperimentalPermissionsApi::class)
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
 
@@ -65,6 +70,8 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun cameraScreen(
+
+    viewModel: ImageViewModel = hiltViewModel()
 
 ) {
 
@@ -114,6 +121,7 @@ fun cameraScreen(
             if (success) imageUri = uri
             if (imageUri.toString().isNotEmpty()) {
                 Log.d("myImageUri", "$imageUri ")
+                viewModel.uploadImage(testToken,uri.toFile())
             }
         }
     )
@@ -170,6 +178,13 @@ fun cameraScreen(
         }
         onDispose { }
     }*/
+
+    val uploadResult by viewModel.uploadResult.collectAsState()
+    uploadResult?.let {
+        // Handle the result as needed
+        //Text("Upload Result: ${it.messageStatus}")
+        Log.i("Upload Result:", "${it.messageStatus}")
+    }
 
     Column(
         Modifier
