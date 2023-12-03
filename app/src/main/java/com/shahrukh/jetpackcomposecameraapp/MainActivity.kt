@@ -3,6 +3,7 @@ package com.shahrukh.jetpackcomposecameraapp
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -107,6 +108,7 @@ fun cameraScreen(
 
                     if (imageUri.toString().isNotEmpty()) {
                         Log.d("myImageUri", "$imageUri ")
+                        viewModel.uploadImage(testToken,uri.toFile(context))
                     }
                 }
             }
@@ -121,7 +123,8 @@ fun cameraScreen(
             if (success) imageUri = uri
             if (imageUri.toString().isNotEmpty()) {
                 Log.d("myImageUri", "$imageUri ")
-                viewModel.uploadImage(testToken,uri.toFile())
+               // uri.toFile(context)
+                viewModel.uploadImage(testToken,uri.toFile(context))
             }
         }
     )
@@ -261,6 +264,22 @@ fun cameraScreen(
 
 
 }
+
+fun Uri.toFile(context: Context): File {
+    val projection = arrayOf(MediaStore.Images.Media.DATA)
+    val cursor: Cursor? = context.contentResolver.query(this, projection, null, null, null)
+    cursor?.use {
+        if (it.moveToFirst()) {
+            val columnIndex: Int = it.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            val filePath: String = it.getString(columnIndex)
+            return File(filePath)
+        } else {
+            throw IllegalArgumentException("Cursor is empty for URI: $this")
+        }
+    }
+    throw IllegalArgumentException("Invalid URI: $this")
+}
+
 
 fun Context.createImageFile(): File {
     // Create an image file name
