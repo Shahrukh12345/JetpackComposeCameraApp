@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -108,7 +109,8 @@ fun cameraScreen(
 
                     if (imageUri.toString().isNotEmpty()) {
                         Log.d("myImageUri", "$imageUri ")
-                        viewModel.uploadImage(testToken,uri.toFile(context))
+                        val f=File(getRealPathFromURI(context, it?.data!!.data!!))
+                        viewModel.uploadImage(testToken, f )
                     }
                 }
             }
@@ -124,7 +126,7 @@ fun cameraScreen(
             if (imageUri.toString().isNotEmpty()) {
                 Log.d("myImageUri", "$imageUri ")
                // uri.toFile(context)
-                viewModel.uploadImage(testToken,uri.toFile(context))
+                viewModel.uploadImage(testToken,file)
             }
         }
     )
@@ -265,6 +267,9 @@ fun cameraScreen(
 
 }
 
+
+
+
 fun Uri.toFile(context: Context): File {
     val projection = arrayOf(MediaStore.Images.Media.DATA)
     val cursor: Cursor? = context.contentResolver.query(this, projection, null, null, null)
@@ -290,6 +295,20 @@ fun Context.createImageFile(): File {
         ".jpg", /* suffix */
         externalCacheDir /* directory */
     )
+}
+
+private fun getRealPathFromURI(context: Context,contentURI: Uri): String {
+    val result: String
+    val cursor: Cursor? = context.contentResolver.query(contentURI, null, null, null, null)
+    if (cursor == null) {
+        result = contentURI.getPath().toString()
+    } else {
+        cursor.moveToFirst()
+        val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+        result = cursor.getString(idx)
+        cursor.close()
+    }
+    return result
 }
 
 

@@ -1,5 +1,6 @@
 package com.shahrukh.jetpackcomposecameraapp.repository
 
+import android.util.Log
 import com.shahrukh.jetpackcomposecameraapp.interfaces.ApiService
 import com.shahrukh.jetpackcomposecameraapp.response.UploadResponse
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +25,7 @@ class ImageRepository @Inject constructor(
                 response.body()?.let { emit(it) } // Assuming YourResponseModel contains the required data
             } catch (e: Exception) {
                 // Handle error
+                Log.d("Upload Exception:" , e.localizedMessage)
             }
         }
     }
