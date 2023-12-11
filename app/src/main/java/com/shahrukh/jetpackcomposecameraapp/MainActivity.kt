@@ -189,6 +189,8 @@ fun cameraScreen(
         // Handle the result as needed
         //Text("Upload Result: ${it.messageStatus}")
         Log.i("Upload Result:", "${it.messageStatus}")
+
+        Log.i("Image Hash:", "${it.hash}")
     }
 
     Column(

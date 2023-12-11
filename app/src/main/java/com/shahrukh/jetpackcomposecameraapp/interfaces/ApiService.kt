@@ -13,8 +13,9 @@ interface ApiService {
 
     @Multipart
     @POST("API/core/upload?type=FILE")
+   // @Headers("Content-Type: application/json")
     suspend fun uploadImage(
-        @Header("Authorization") token: String,
+        @Header("token") token: String,
         @Part file: MultipartBody.Part
 
     ): Response<UploadResponse>
