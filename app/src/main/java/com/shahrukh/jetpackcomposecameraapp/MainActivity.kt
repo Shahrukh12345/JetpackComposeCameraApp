@@ -126,7 +126,8 @@ fun cameraScreen(
             if (imageUri.toString().isNotEmpty()) {
                 Log.d("myImageUri", "$imageUri ")
                // uri.toFile(context)
-                viewModel.uploadImage(testToken,file)
+                val f=File(getRealPathFromURI(context, uri))
+                viewModel.uploadImage(testToken,f)
             }
         }
     )
